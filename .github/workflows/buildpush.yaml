@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # PHP 8.2 Debian
+  build-8_2-cli:
+    uses: ./.github/workflows/createtest.yml
+    name: namoshek/php-mssql:8.2-cli
+    secrets: inherit
+    with:
+      source-directory: 8.2/cli
+      image-tag: namoshek/php-mssql:8.2-cli
+
+  build-8_2-fpm:
+    uses: ./.github/workflows/createtest.yml
+    name: namoshek/php-mssql:8.2-fpm
+    secrets: inherit
+    with:
+      source-directory: 8.2/fpm
+      image-tag: namoshek/php-mssql:8.2-fpm
