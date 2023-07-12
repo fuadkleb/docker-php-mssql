@@ -36,5 +36,18 @@ RUN sed -i "s/\(CipherString *= *\).*/\1DEFAULT@SECLEVEL=1 /" "/etc/ssl/openssl.
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+# Install Elastic APM 
+WORKDIR /opt/apm
+ENV CFLAGS="-std=gnu99"
+RUN git clone https://github.com/elastic/apm-agent-php.git /opt/apm \
+    && cd /opt/apm/src/ext \
+    && phpize \
+    && ./configure --enable-elastic_apm \
+    && make clean \
+    && make \
+    && make install \
+    && echo "extension=elastic_apm.so" > /usr/local/etc/php/conf.d/docker-php-ext-apm.ini \
+    && echo "elastic_apm.bootstrap_php_part_file=/opt/apm/src/bootstrap_php_part.php" >> /usr/local/etc/php/conf.d/docker-php-ext-apm.ini
+
 # Setting the work directory.
 WORKDIR /var/www
