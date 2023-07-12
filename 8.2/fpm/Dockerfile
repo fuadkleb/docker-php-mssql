@@ -36,7 +36,12 @@ RUN sed -i "s/\(CipherString *= *\).*/\1DEFAULT@SECLEVEL=1 /" "/etc/ssl/openssl.
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# Install Elastic APM 
+# Install Elastic APM
+RUN apt-get update && apt-get install -y \
+    bash \
+    curl \
+    git 
+
 WORKDIR /opt/apm
 ENV CFLAGS="-std=gnu99"
 RUN git clone https://github.com/elastic/apm-agent-php.git /opt/apm \
