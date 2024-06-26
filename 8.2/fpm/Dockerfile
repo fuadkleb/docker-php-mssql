@@ -33,6 +33,9 @@ RUN chmod uga+x /usr/bin/install-php-extensions \
 RUN sed -i "s/\(MinProtocol *= *\).*/\1TLSv1.0 /" "/etc/ssl/openssl.cnf"
 RUN sed -i "s/\(CipherString *= *\).*/\1DEFAULT@SECLEVEL=1 /" "/etc/ssl/openssl.cnf"
 
+# Set AccessLog to off
+RUN sed -i "s/error_log = /;error_log = /" /usr/local/etc/php-fpm.d/docker.conf
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
