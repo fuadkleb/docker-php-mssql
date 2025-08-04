@@ -40,7 +40,7 @@ RUN sed -i "s/error_log = /;error_log = /" /usr/local/etc/php-fpm.d/docker.conf
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Install Elastic APM 
-RUN curl -fsSL https://github.com/elastic/apm-agent-php/releases/download/v1.9.1/apm-agent-php_1.9.1_all.deb > /tmp/apm-gent-php.deb \
+RUN curl -fsSL https://github.com/elastic/apm-agent-php/releases/download/v1.15.1/apm-agent-php_1.15.1_amd64.deb > /tmp/apm-gent-php.deb \
     && dpkg -i /tmp/apm-gent-php.deb
 
 # Setting the work directory.
