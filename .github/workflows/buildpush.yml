@@ -6,6 +6,40 @@ on:
       - main
 
 jobs:
+  # PHP 8.4 Debian
+  build-8_4-cli:
+    uses: ./.github/workflows/createtest.yml
+    name: fuadkleb/php-mssql:8.4-cli
+    secrets: inherit
+    with:
+      source-directory: 8.4/cli
+      image-tag: fuadkleb/php-mssql:8.4-cli
+
+  build-8_4-fpm:
+    uses: ./.github/workflows/createtest.yml
+    name: fuadkleb/php-mssql:8.4-fpm
+    secrets: inherit
+    with:
+      source-directory: 8.4/fpm
+      image-tag: fuadkleb/php-mssql:8.4-fpm
+
+  # PHP 8.3 Debian
+  build-8_3-cli:
+    uses: ./.github/workflows/createtest.yml
+    name: fuadkleb/php-mssql:8.3-cli
+    secrets: inherit
+    with:
+      source-directory: 8.3/cli
+      image-tag: fuadkleb/php-mssql:8.3-cli
+
+  build-8_3-fpm:
+    uses: ./.github/workflows/createtest.yml
+    name: fuadkleb/php-mssql:8.3-fpm
+    secrets: inherit
+    with:
+      source-directory: 8.3/fpm
+      image-tag: fuadkleb/php-mssql:8.3-fpm
+
   # PHP 8.2 Debian
   build-8_2-cli:
     uses: ./.github/workflows/createtest.yml
