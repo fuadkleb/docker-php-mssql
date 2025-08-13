@@ -23,6 +23,14 @@ jobs:
       source-directory: 8.4/fpm
       image-tag: fuadkleb/php-mssql:8.4-fpm
 
+  build-8_4-franken:
+    uses: ./.github/workflows/createtest.yml
+    name: fuadkleb/php-mssql:8.4-franken
+    secrets: inherit
+    with:
+      source-directory: 8.4/franken
+      image-tag: fuadkleb/php-mssql:8.4-franken
+
   # PHP 8.3 Debian
   build-8_3-cli:
     uses: ./.github/workflows/createtest.yml
