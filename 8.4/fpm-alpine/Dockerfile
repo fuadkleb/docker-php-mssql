@@ -1,6 +1,5 @@
 FROM php:8.4-fpm-alpine
 
-ARG TARGETARCH
 ENV ACCEPT_EULA=Y \
     COMPOSER_ALLOW_SUPERUSER=1
 
@@ -44,7 +43,9 @@ FROM php:8.4-fpm-alpine
 COPY --from=php_ext /usr/bin/install-php-extensions /usr/bin/install-php-extensions
 
 # Reapply the ODBC bits (they’re in the previous stage only)
-ENV ACCEPT_EULA=Y
+ENV ELASTIC_APM_PHP_VER=1.15.1\
+    ACCEPT_EULA=Y
+ARG TARGETARCH
 ARG MSODBC_VER=18.5.1.1-1
 ARG MSSQL_TOOLS_VER=18.4.1.1-1
 RUN apk add --no-cache ca-certificates && update-ca-certificates
@@ -81,12 +82,22 @@ RUN set -eux; \
 # --- Composer (tiny, copied—no curl kept)
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-RUN set -eux; \
-    curl -fsSL -o /tmp/apm-agent-php.deb \
-    "https://github.com/elastic/apm-agent-php/releases/download/v1.15.1/apm-agent-php_1.15.1_${TARGETARCH}.deb"; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends /tmp/apm-agent-php.deb; \
-    rm -f /tmp/apm-agent-php.deb; \
-    rm -rf /var/lib/apt/lists/*; 
+RUN set -euo pipefail \
+  && apk add --no-cache --virtual .apm-fetch ca-certificates curl \
+  && update-ca-certificates \
+  && case "${TARGETARCH}" in \
+      amd64) APM_ARCH="x86_64";  EXPECTED_SHA="${ELASTIC_APM_SHA256_X86_64:-}";; \
+      arm64) APM_ARCH="aarch64"; EXPECTED_SHA="${ELASTIC_APM_SHA256_AARCH64:-}";; \
+      *) echo "Elastic APM: unsupported TARGETARCH=${TARGETARCH}; skipping."; \
+          apk del .apm-fetch; exit 0;; \
+    esac \
+  && APK_URL="https://github.com/elastic/apm-agent-php/releases/download/v${ELASTIC_APM_PHP_VER}/apm-agent-php_${ELASTIC_APM_PHP_VER}_${APM_ARCH}.apk" \
+  && echo "Fetching ${APK_URL}" \
+  && curl -fsSL -o /tmp/apm-agent-php.apk "${APK_URL}" \
+  && if [ -n "${EXPECTED_SHA}" ]; then echo "${EXPECTED_SHA}  /tmp/apm-agent-php.apk" | sha256sum -c -; fi \
+  && apk add --no-cache --allow-untrusted /tmp/apm-agent-php.apk \
+  && rm -f /tmp/apm-agent-php.apk \
+  && apk del .apm-fetch
+
 
 WORKDIR /var/www
