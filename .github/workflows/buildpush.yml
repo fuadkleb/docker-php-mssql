@@ -75,20 +75,3 @@ jobs:
     with:
       source-directory: 8.2/fpm
       image-tag: fuadkleb/php-mssql:8.2-fpm
-
-  # PHP 8.1 Debian
-  build-8_1-cli:
-    uses: ./.github/workflows/createtest.yml
-    name: fuadkleb/php-mssql:8.1-cli
-    secrets: inherit
-    with:
-      source-directory: 8.1/cli
-      image-tag: fuadkleb/php-mssql:8.1-cli
-
-  build-8_1-fpm:
-    uses: ./.github/workflows/createtest.yml
-    name: fuadkleb/php-mssql:8.1-fpm
-    secrets: inherit
-    with:
-      source-directory: 8.1/fpm
-      image-tag: fuadkleb/php-mssql:8.1-fpm
