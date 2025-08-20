@@ -23,6 +23,15 @@ jobs:
       source-directory: 8.4/fpm
       image-tag: fuadkleb/php-mssql:8.4-fpm
 
+  build-8_4-fpm-alpine:
+    uses: ./.github/workflows/createtest.yml
+    name: fuadkleb/php-mssql:8.4-fpm-alpine
+    secrets: inherit
+    with:
+      source-directory: 8.4/fpm-alpine
+      image-tag: fuadkleb/php-mssql:8.4-fpm-alpine
+      platforms: linux/amd64, linux/arm64
+
   build-8_4-franken:
     uses: ./.github/workflows/createtest.yml
     name: fuadkleb/php-mssql:8.4-franken
