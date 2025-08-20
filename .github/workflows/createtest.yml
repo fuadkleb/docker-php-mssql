@@ -11,7 +11,11 @@ on:
         description: "The image tag to use for the Docker image."
         type: string
         required: true
-
+      platforms:
+        required: false
+        type: string
+        default: "linux/amd64"   # default single-arch
+        description: "The platforms to build the Docker image for, default is linux/amd64."
 jobs:
   build_and_test:
     name: Build, test and publish Docker image

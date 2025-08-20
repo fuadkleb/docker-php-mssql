@@ -80,4 +80,12 @@ RUN set -eux; \
 # --- Composer (tiny, copied—no curl kept)
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+RUN set -eux; \
+    curl -fsSL -o /tmp/apm-agent-php.deb \
+    "https://github.com/elastic/apm-agent-php/releases/download/v1.15.1/apm-agent-php_1.15.1_${TARGETARCH}.deb"; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends /tmp/apm-agent-php.deb; \
+    rm -f /tmp/apm-agent-php.deb; \
+    rm -rf /var/lib/apt/lists/*; 
+
 WORKDIR /var/www
