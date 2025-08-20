@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1.7
 FROM php:8.4-cli-bookworm
 
+ARG TARGETPLATFORM
 ARG TARGETARCH
+ARG BUILDPLATFORM
 ENV ACCEPT_EULA=Y \
     DEBIAN_FRONTEND=noninteractive \
     COMPOSER_ALLOW_SUPERUSER=1 \
@@ -32,7 +34,8 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 # -- Bring in install-php-extensions ---------------------------------------------
-FROM mlocati/php-extension-installer:latest AS php-ext
+FROM --platform=$BUILDPLATFORM mlocati/php-extension-installer:latest AS php_ext
+FROM --platform=$BUILDPLATFORM composer:latest AS composer_bin
 FROM php:8.4-cli-bookworm
 
 ARG TARGETARCH
@@ -77,6 +80,6 @@ RUN sed -i 's/^\s*MinProtocol.*/MinProtocol = TLSv1.0/' /etc/ssl/openssl.cnf \
  && sed -i 's/^\s*CipherString.*/CipherString = DEFAULT@SECLEVEL=1/' /etc/ssl/openssl.cnf
 
 # Composer (tiny)
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer_bin /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www

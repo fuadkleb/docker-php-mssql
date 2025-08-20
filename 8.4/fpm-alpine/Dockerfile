@@ -1,5 +1,8 @@
 FROM php:8.4-fpm-alpine
 
+ARG TARGETPLATFORM
+ARG TARGETARCH
+ARG BUILDPLATFORM
 ENV ACCEPT_EULA=Y \
     COMPOSER_ALLOW_SUPERUSER=1
 
@@ -38,7 +41,8 @@ RUN set -euo pipefail \
 
 # --- Bring in the PHP extension installer
 # (use a stage so the helper binary is copied without pulling the whole image into the final layers)
-FROM mlocati/php-extension-installer:latest AS php_ext
+FROM --platform=$BUILDPLATFORM mlocati/php-extension-installer:latest AS php_ext
+FROM --platform=$BUILDPLATFORM composer:latest AS composer_bin
 FROM php:8.4-fpm-alpine
 COPY --from=php_ext /usr/bin/install-php-extensions /usr/bin/install-php-extensions
 
@@ -80,7 +84,7 @@ RUN set -eux; \
     sed -i 's/error_log = /;error_log = /' /usr/local/etc/php-fpm.d/docker.conf
 
 # --- Composer (tiny, copied—no curl kept)
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer_bin /usr/bin/composer /usr/local/bin/composer
 
 RUN set -euo pipefail \
   && apk add --no-cache --virtual .apm-fetch ca-certificates curl \
