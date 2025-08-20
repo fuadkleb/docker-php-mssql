@@ -66,13 +66,13 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 # install-php-extensions helper
-COPY --from=php-ext /usr/bin/install-php-extensions /usr/bin/install-php-extensions
+COPY --from=php_ext /usr/bin/install-php-extensions /usr/bin/install-php-extensions
 
 # PHP extensions (installer auto-installs & removes build deps)
 RUN set -eux; \
     chmod +x /usr/bin/install-php-extensions; \
     install-php-extensions \
-      bcmath ds exif gd intl opcache pcntl \
+      bcmath exif gd intl \
       pdo_sqlsrv sqlsrv redis zip pgsql pdo_pgsql curl
 
 # Optional: relax OpenSSL policy (only if you really need it)

@@ -66,7 +66,7 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 # install-php-extensions helper
-COPY --from=php-ext /usr/bin/install-php-extensions /usr/bin/install-php-extensions
+COPY --from=php_ext /usr/bin/install-php-extensions /usr/bin/install-php-extensions
 
 # PHP extensions (installer auto-installs & removes build deps)
 RUN set -eux; \
